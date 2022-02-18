@@ -81,3 +81,28 @@ export interface GameState {
     board: Board;
     you: Battlesnake;
 }
+
+/** Custom Interfaces and Types */
+type PossibleMoves = { [key: string]: boolean}
+
+interface CheckWalls {
+    myHead: Coord;
+    board: Board;
+    possibleMoves: PossibleMoves;
+}
+export interface CheckWallsRelative {
+    x: number,
+    y: number,
+    possibleMoves: PossibleMoves,
+    board: Board
+}
+export interface CheckBody {
+    myHead: Coord,
+    body: Coord[],
+    possibleMoves: PossibleMoves
+}
+
+export interface CheckSnakes {
+    myHead: Coord,
+    snakes: Battlesnake[]
+}

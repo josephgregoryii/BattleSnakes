@@ -1,11 +1,5 @@
-import {
-  InfoResponse,
-  GameState,
-  MoveResponse,
-  Game,
-  Coord,
-  Board,
-} from "./types";
+import { GameState, InfoResponse, MoveResponse } from "./types";
+import { checkBody, checkSnakes, checkWalls } from "./checks";
 
 export function info(): InfoResponse {
   console.log("INFO");
@@ -25,87 +19,6 @@ export function start(gameState: GameState): void {
 
 export function end(gameState: GameState): void {
   console.log(`${gameState.game.id} END\n`);
-}
-
-function checkWalls(
-  myHead: Coord,
-  board: Board,
-  possibleMoves: { [key: string]: boolean }
-) {
-  // coordinate of snake head
-  const { x, y } = myHead;
-
-  // directions const to be used as next possible
-  // up, down, left, right coordinates
-  const directions: Array<[number, number]> = [
-    [1, 0],
-    [0, 1],
-    [-1, 0],
-    [0, -1],
-  ];
-  directions.forEach(function checkNextDirection(direction) {
-    const [i, j]: [number, number] = direction;
-    const nextX: number = x + i;
-    const nextY: number = y + j;
-    bfs(nextX, nextY, null, null, possibleMoves, board);
-  });
-}
-
-function checkWallsRelative(
-  x: number,
-  y: number,
-  possibleMoves: { [key: string]: boolean },
-  board: Board
-) {
-  // size of game board
-  const { width: n, height: m } = board;
-  if (x < 0 && possibleMoves.left) possibleMoves.left = false;
-  if (x >= n && possibleMoves.right) possibleMoves.right = false;
-  if (y < 0 && possibleMoves.down) possibleMoves.down = false;
-  if (y >= m && possibleMoves.up) possibleMoves.up = false;
-}
-
-function checkBodyRelative(
-  x: number,
-  y: number,
-  cx: number,
-  cy: number,
-  possibleMoves: { [key: string]: boolean }
-) {
-  // check body relative to the head's x coordinate
-  if (x - 1 === cx && y === cy) possibleMoves.left = false;
-  if (x + 1 === cx && y === cy) possibleMoves.right = false;
-
-  // check body relative to the head's y coordinate
-  if (y - 1 === cy && x === cx) possibleMoves.down = false;
-  if (y + 1 === cy && x === cx) possibleMoves.up = false;
-}
-
-function bfs(
-  x: number,
-  y: number,
-  cx: number | null,
-  cy: number | null,
-  possibleMoves: { [key: string]: boolean },
-  board: Board | null = null
-) {
-  if (cx !== null && cy !== null)
-    checkBodyRelative(x, y, cx, cy, possibleMoves);
-  else checkWallsRelative(x, y, possibleMoves, board as Board);
-}
-
-function checkBody(
-  myHead: Coord,
-  body: Coord[],
-  possibleMoves: { [key: string]: boolean }
-) {
-  const { x, y } = myHead;
-
-  // iterate through the coord of the body
-  body.forEach(function checkNextBody(coord) {
-    const { x: cx, y: cy } = coord;
-    bfs(x, y, cx, cy, possibleMoves);
-  });
 }
 
 export function move(gameState: GameState): MoveResponse {
@@ -132,17 +45,21 @@ export function move(gameState: GameState): MoveResponse {
 
   // Step 1 - Don't hit walls.
   // Use information in gameState to prevent your Battlesnake from moving beyond the boundaries of the board.
-  const boardWidth = gameState.board.width;
-  const boardHeight = gameState.board.height;
-  checkWalls(myHead, gameState.board, possibleMoves);
+  checkWalls({
+    myHead,
+    possibleMoves,
+    board: gameState.board,
+  });
 
   // Step 2 - Don't hit yourself.
   // Use information in gameState to prevent your Battlesnake from colliding with itself.
-  const [head, ...myBody] = gameState.you.body;
-  checkBody(myHead, myBody, possibleMoves);
+  const [_, ...body] = gameState.you.body;
+  checkBody({ myHead, possibleMoves, body });
 
   // TODO: Step 3 - Don't collide with others.
   // Use information in gameState to prevent your Battlesnake from colliding with others.
+  const { snakes } = gameState.board;
+  checkSnakes({ snakes, myHead, possibleMoves });
 
   // TODO: Step 4 - Find food.
   // Use information in gameState to seek out and find food.
@@ -154,7 +71,7 @@ export function move(gameState: GameState): MoveResponse {
   const safeMoves = Object.keys(possibleMoves).filter(
     (key) => possibleMoves[key]
   );
-  console.log("body", myBody);
+  console.log("body", body);
   console.log("head", myHead);
   console.log("SAFE", safeMoves);
   const response: MoveResponse = {
