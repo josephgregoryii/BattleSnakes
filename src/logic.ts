@@ -20,7 +20,7 @@ export function end(gameState: GameState): void {
   console.log(`${gameState.game.id} END\n`);
 }
 
-async function checkWalls(
+function checkWalls(
   x: number,
   y: number,
   n: number,
@@ -39,11 +39,10 @@ async function checkWalls(
     const nextY: number = y + j;
 
     if (nextX < 0) possibleMoves.left = false;
-    if (nextX > n) possibleMoves.right = false;
-    if (nextY < 0) possibleMoves.down = false;
-    if (nextY > m) possibleMoves.up = false;
+    else if (nextX > n) possibleMoves.right = false;
+    else if (nextY < 0) possibleMoves.down = false;
+    else if (nextY > m) possibleMoves.up = false;
   });
-  return;
 }
 
 function checkBody(
