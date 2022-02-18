@@ -20,7 +20,7 @@ export function end(gameState: GameState): void {
   console.log(`${gameState.game.id} END\n`);
 }
 
-function checkWalls(
+async function checkWalls(
   x: number,
   y: number,
   n: number,
@@ -33,16 +33,17 @@ function checkWalls(
     [-1, 0],
     [0, -1],
   ];
-  directions.forEach((direction) => {
-    const [i, j] = direction;
+  directions.forEach(function checkNextDirection(direction) {
+    const [i, j]: [number, number] = direction;
     const nextX: number = x + i;
     const nextY: number = y + j;
 
-    if (nextX <= 0) possibleMoves.left = false;
+    if (nextX < 0) possibleMoves.left = false;
     if (nextX >= n) possibleMoves.right = false;
-    if (nextY <= 0) possibleMoves.down = false;
+    if (nextY < 0) possibleMoves.down = false;
     if (nextY >= m) possibleMoves.up = false;
   });
+  return;
 }
 
 function checkBody(
@@ -90,6 +91,7 @@ export function move(gameState: GameState): MoveResponse {
   const boardWidth = gameState.board.width;
   const boardHeight = gameState.board.height;
   checkWalls(myHead.x, myHead.y, boardWidth, boardHeight, possibleMoves);
+  console.log(gameState.board);
 
   // Step 2 - Don't hit yourself.
   // Use information in gameState to prevent your Battlesnake from colliding with itself.
