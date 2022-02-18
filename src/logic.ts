@@ -39,9 +39,9 @@ async function checkWalls(
     const nextY: number = y + j;
 
     if (nextX < 0) possibleMoves.left = false;
-    if (nextX >= n) possibleMoves.right = false;
+    if (nextX > n) possibleMoves.right = false;
     if (nextY < 0) possibleMoves.down = false;
-    if (nextY >= m) possibleMoves.up = false;
+    if (nextY > m) possibleMoves.up = false;
   });
   return;
 }
