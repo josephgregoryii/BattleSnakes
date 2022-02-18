@@ -78,14 +78,14 @@ function checkBodyRelative(
 
   // check body relative to the head's y coordinate
   if (y - 1 === cy && x === cx) possibleMoves.down = false;
-  if (y + 1 === cy && x === cx) possibleMoves.down = false;
+  if (y + 1 === cy && x === cx) possibleMoves.up = false;
 }
 
 function bfs(
   x: number,
   y: number,
-  cx: number | null = null,
-  cy: number | null = null,
+  cx: number | null,
+  cy: number | null,
   possibleMoves: { [key: string]: boolean },
   board: Board | null = null
 ) {
