@@ -1,4 +1,4 @@
-import { InfoResponse, GameState, MoveResponse, Game, Coord } from "./types";
+import { InfoResponse, GameState, MoveResponse, Game, Coord, Board } from "./types";
 
 export function info(): InfoResponse {
   console.log("INFO");
@@ -21,45 +21,67 @@ export function end(gameState: GameState): void {
 }
 
 function checkWalls(
-  x: number,
-  y: number,
-  n: number,
-  m: number,
+  myHead: Coord,
+  board: Board,
   possibleMoves: { [key: string]: boolean }
 ) {
+
+  // coordinate of snake head
+  const { x, y } = myHead
+
+  // size of game board
+  const { 
+    width: n, 
+    height: m 
+  } = board
+
+  // directions const to be used as next possible
+  // up, down, left, right coordinates
   const directions: Array<[number, number]> = [
-    [1, 0],
-    [0, 1],
+    [1,  0],
+    [0,  1],
     [-1, 0],
     [0, -1],
   ];
   directions.forEach(function checkNextDirection(direction) {
-    const [i, j]: [number, number] = direction;
-    const nextX: number = x + i;
-    const nextY: number = y + j;
+    const [i, j]: [number, number]  = direction;
+    const nextX: number             = x + i;
+    const nextY: number             = y + j;
 
-    if (nextX < 0) possibleMoves.left = false;
-    else if (nextX > n) possibleMoves.right = false;
-    else if (nextY < 0) possibleMoves.down = false;
-    else if (nextY > m) possibleMoves.up = false;
+    if (nextX < 0 && possibleMoves.left)    possibleMoves.left  = false;
+    if (nextX >= n && possibleMoves.right)  possibleMoves.right = false;
+    if (nextY < 0 && possibleMoves.down)    possibleMoves.down  = false;
+    if (nextY >= m && possibleMoves.up)     possibleMoves.up    = false;
   });
 }
 
+// function condition(x: number, y: number, cx: number, cy: number) {
+//   const directions: Array<[number, number]> = [
+//     [1,  0],
+//     [0,  1],
+//     [-1, 0],
+//     [0, -1],
+//   ];
+// }
+
 function checkBody(
-  x: number,
-  y: number,
+  myHead: Coord,
   body: Coord[],
   possibleMoves: { [key: string]: boolean }
 ) {
+
+  const { x, y } = myHead;
   // iterate through the coord of the body
-  body.forEach((coord) => {
+  body.forEach(function checkNextBody(coord) {
     const { x: cx, y: cy } = coord;
 
-    // check if next square is the snake's body
-    if (x - 1 === cx) possibleMoves.left = false;
-    if (x + 1 === cx) possibleMoves.right = false;
-    if (y - 1 === cy) possibleMoves.bottom = false;
-    if (y + 1 === cy) possibleMoves.up = false;
+    // check body relative to the head's x coordinate
+    if (x - 1 === cx && y === cy) possibleMoves.left  = false;
+    if (x + 1 === cx && y === cy) possibleMoves.right = false;
+    
+    // check body relative to the head's y coordinate
+    if (y - 1 === cy && x === cx) possibleMoves.down = false;
+    if (y + 1 === cy && x === cx) possibleMoves.up   = false;
   });
 }
 
@@ -89,13 +111,12 @@ export function move(gameState: GameState): MoveResponse {
   // Use information in gameState to prevent your Battlesnake from moving beyond the boundaries of the board.
   const boardWidth = gameState.board.width;
   const boardHeight = gameState.board.height;
-  checkWalls(myHead.x, myHead.y, boardWidth, boardHeight, possibleMoves);
-  console.log(gameState.board);
+  checkWalls(myHead,  gameState.board, possibleMoves);
 
   // Step 2 - Don't hit yourself.
   // Use information in gameState to prevent your Battlesnake from colliding with itself.
-  const myBody = gameState.you.body;
-  checkBody(myHead.x, myHead.y, myBody, possibleMoves);
+  const [head, ...myBody] = gameState.you.body;
+  checkBody(myHead, myBody, possibleMoves);
 
   // TODO: Step 3 - Don't collide with others.
   // Use information in gameState to prevent your Battlesnake from colliding with others.
@@ -105,9 +126,14 @@ export function move(gameState: GameState): MoveResponse {
 
   // Finally, choose a move from the available safe moves.
   // TODO: Step 5 - Select a move to make based on strategy, rather than random.
+
+  console.log('possibleMoves', possibleMoves)
   const safeMoves = Object.keys(possibleMoves).filter(
     (key) => possibleMoves[key]
   );
+  console.log('body', myBody)
+  console.log('head', myHead);
+  console.log('SAFE', safeMoves);
   const response: MoveResponse = {
     move: safeMoves[Math.floor(Math.random() * safeMoves.length)],
   };
