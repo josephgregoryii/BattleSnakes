@@ -86,23 +86,23 @@ export function checkSnakes(args: CheckSnakes) {
       const { x: i, y: j } = body;
 
       // set position of other snake
-      board[i - 1][j - 1] = 1;
+      board[i][j] = 1;
     })
   );
 
-  if (board[x + 1][y] && !snakeCoordSet.has([x + 1, y])) {
+  if (x + 1 < board.length && board[x + 1][y] && !snakeCoordSet.has([x + 1, y])) {
     possibleMoves.right = false;
     snakeCoordSet.add([x + 1, y]);
   }
-  if (board[x - 1][y] && !snakeCoordSet.has([x - 1, y])) {
+  if ( x - 1 >= 0 && board[x - 1][y] && !snakeCoordSet.has([x - 1, y])) {
     possibleMoves.left = false;
     snakeCoordSet.add([x - 1, y]);
   }
-  if (board[x][y + 1] && !snakeCoordSet.has([x, y + 1])) {
+  if (y + 1 < board[0].length && board[x][y + 1] && !snakeCoordSet.has([x, y + 1])) {
     possibleMoves.up = false;
     snakeCoordSet.add([x, y + 1]);
   }
-  if (board[x][y - 1] && !snakeCoordSet.has([x, y - 1]))
+  if (y - 1 >= 0 && board[x][y - 1] && !snakeCoordSet.has([x, y - 1]))
     possibleMoves.down = false;
   snakeCoordSet.add([x, y - 1]);
 }
