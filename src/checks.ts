@@ -76,22 +76,18 @@ function checkBodyRelative(
 }
 
 export function checkSnakes(args: CheckSnakes) {
-  const { snakes, myHead, possibleMoves } = args;
+  const { snakes, myHead, possibleMoves, r, c } = args;
   const { x, y } = myHead;
 
-  const snakeCoordSet = new Set<Coord>();
-  snakes.forEach((snake) =>
-    snake.body.forEach((body) => snakeCoordSet.add(body))
-  );
-  console.log(snakeCoordSet);
+  const board = Array(r).fill(0).map(() => Array(c).fill(0));
 
-  const nextRight: Coord = { x: x + 1, y };
-  const nextLeft: Coord = { x: x - 1, y };
-  const nextUp: Coord = { x, y: y + 1 };
-  const nextDown: Coord = { x, y: y - 1 };
+  const nextRight: [number,number] = [ x + 1, y ];
+  const nextLeft: [number,number] = [ x - 1, y ];
+  const nextUp: [number,number] = [x, y + 1 ];
+  const nextDown: [number,number] = [x, y - 1 ];
 
-  // if (set.has(nextRight)) possibleMoves.right = false;
-  // if (snake.body.includes(nextLeft)) possibleMoves.left = false;
-  // if (snake.body.includes(nextUp)) possibleMoves.up = false;
-  // if (snake.body.includes(nextDown)) possibleMoves.down = false;
+//   if (snakeCoordSet.has(nextRight)) possibleMoves.right = false;
+//   if (snakeCoordSet.has(nextLeft)) possibleMoves.left = false;
+//   if (snakeCoordSet.has(nextUp)) possibleMoves.up = false;
+//   if (snakeCoordSet.has(nextDown)) possibleMoves.down = false;
 }
