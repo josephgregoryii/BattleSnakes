@@ -77,24 +77,21 @@ function checkBodyRelative(
 
 export function checkSnakes(args: CheckSnakes) {
   const { snakes, myHead, possibleMoves } = args;
-  const directions: Array<[number, number]> = [
-    [1, 0],
-    [0, 1],
-    [-1, 0],
-    [0, -1],
-  ];
-
   const { x, y } = myHead;
 
-  snakes.forEach(function eachSnake(snake) {
-    const nextRight = { x: x + 1, y };
-    const nextLeft = { x: x - 1, y };
-    const nextUp = { x, y: y + 1 };
-    const nextDown = { x, y: y - 1 };
-
-    if (snake.body.includes(nextRight)) possibleMoves.right = false;
-    if (snake.body.includes(nextLeft)) possibleMoves.left = false;
-    if (snake.body.includes(nextUp)) possibleMoves.up = false;
-    if (snake.body.includes(nextDown)) possibleMoves.down = false;
+  const snakeCoordSet = new Set<Coord[]>();
+  snakes.forEach((snake) => {
+    snakeCoordSet.add(snake.body.map((body) => body));
   });
+  console.log(snakeCoordSet);
+
+  const nextRight: Coord = { x: x + 1, y };
+  const nextLeft: Coord = { x: x - 1, y };
+  const nextUp: Coord = { x, y: y + 1 };
+  const nextDown: Coord = { x, y: y - 1 };
+
+  // if (set.has(nextRight)) possibleMoves.right = false;
+  // if (snake.body.includes(nextLeft)) possibleMoves.left = false;
+  // if (snake.body.includes(nextUp)) possibleMoves.up = false;
+  // if (snake.body.includes(nextDown)) possibleMoves.down = false;
 }
