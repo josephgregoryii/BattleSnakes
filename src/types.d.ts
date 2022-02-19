@@ -106,6 +106,5 @@ export interface CheckSnakes {
   myHead: Coord;
   snakes: Battlesnake[];
   possibleMoves: PossibleMoves;
-  r: number;
-  c: number;
+  boardReference: Array<Array<number>>;
 }
