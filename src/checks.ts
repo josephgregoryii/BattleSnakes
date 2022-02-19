@@ -79,10 +79,10 @@ export function checkSnakes(args: CheckSnakes) {
   const { snakes, myHead, possibleMoves } = args;
   const { x, y } = myHead;
 
-  const snakeCoordSet = new Set<Coord[]>();
-  snakes.forEach((snake) => {
-    snakeCoordSet.add(snake.body.map((body) => body));
-  });
+  const snakeCoordSet = new Set<Coord>();
+  snakes.forEach((snake) =>
+    snake.body.forEach((body) => snakeCoordSet.add(body))
+  );
   console.log(snakeCoordSet);
 
   const nextRight: Coord = { x: x + 1, y };
